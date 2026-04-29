@@ -12,7 +12,7 @@ import { getSupabaseAdmin } from "../../../lib/server/supabase-admin";
 export const runtime = "nodejs";
 
 interface PageProps {
-  params: { reportId: string } | Promise<{ reportId: string }>;
+  params: Promise<{ reportId: string }>;
 }
 
 function buildSectionId(title: string, index: number): string {
@@ -89,7 +89,7 @@ async function getReport(reportId: string): Promise<InstitutionalReport | null> 
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { reportId } = await Promise.resolve(params);
+  const { reportId } = await params;
   const report = await getReport(reportId);
   if (!report) {
     return {
@@ -133,7 +133,7 @@ const AGENT_TEAM = [
 ];
 
 export default async function ReportDetailPage({ params }: PageProps) {
-  const { reportId } = await Promise.resolve(params);
+  const { reportId } = await params;
   const report = await getReport(reportId);
 
   if (!report) {
@@ -428,4 +428,3 @@ export default async function ReportDetailPage({ params }: PageProps) {
     </main>
   );
 }
-
