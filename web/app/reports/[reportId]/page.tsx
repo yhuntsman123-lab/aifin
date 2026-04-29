@@ -118,13 +118,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 const LEFT_NAV_ITEMS = [
-  { key: "invest", title: "投资要点", icon: "◎" },
-  { key: "fundamental", title: "基本面", icon: "◈" },
-  { key: "valuation", title: "估值模型", icon: "◉" },
-  { key: "industry", title: "行业比较", icon: "▣" },
-  { key: "news", title: "消息面", icon: "▤" },
-  { key: "risk", title: "风险", icon: "⚑" },
-  { key: "conclusion", title: "结论", icon: "✦" },
+  { key: "invest", title: "投资要点", icon: "01" },
+  { key: "fundamental", title: "基本面", icon: "02" },
+  { key: "valuation", title: "估值模型", icon: "03" },
+  { key: "industry", title: "行业比较", icon: "04" },
+  { key: "news", title: "消息面", icon: "05" },
+  { key: "risk", title: "风险", icon: "06" },
+  { key: "conclusion", title: "结论", icon: "07" },
 ];
 
 const AGENT_TEAM = [
@@ -173,6 +173,14 @@ export default async function ReportDetailPage({ params }: PageProps) {
   const lineage = report.supplementaryData?.sourceTrace || [];
   const qualityOk = lineage.filter((item) => item.status === "ok").length;
   const qualityAll = lineage.length;
+  const sourceProviders = Array.from(
+    new Set(
+      lineage
+        .map((item) => String(item.provider || "").trim())
+        .filter(Boolean),
+    ),
+  );
+  const sourceSummary = sourceProviders.slice(0, 2).join(" / ") || "多源聚合";
 
   const riskRows =
     report.fraudSignals && report.fraudSignals.length > 0
@@ -218,11 +226,11 @@ export default async function ReportDetailPage({ params }: PageProps) {
             </a>
             <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex dark:text-slate-300">
               <a href="/">首页</a>
-              <a href="#" className="font-semibold text-blue-600 dark:text-blue-300">
+              <a href="/" className="font-semibold text-blue-600 dark:text-blue-300">
                 研报中心
               </a>
-              <a href="#">数据中心</a>
-              <a href="#">策略工具</a>
+              <a href="/">数据中心</a>
+              <a href="/">策略工具</a>
               <a href="/account">会员中心</a>
             </nav>
           </div>
@@ -255,7 +263,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
                         : "border-transparent text-slate-700 hover:border-slate-200 hover:bg-slate-100 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
                     }`}
                   >
-                    <span className={`inline-flex h-5 w-5 items-center justify-center rounded-md text-xs ${active ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-200"}`}>
+                    <span className={`inline-flex h-5 w-5 items-center justify-center rounded-md text-[11px] font-semibold ${active ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-200"}`}>
                       {item.icon}
                     </span>
                     <span>{item.title}</span>
@@ -277,7 +285,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
               </div>
               <div className="flex justify-between">
                 <span>财报来源</span>
-                <span>Wind / 同花顺</span>
+                <span>{sourceSummary}</span>
               </div>
               <div className="flex justify-between">
                 <span>一致性校验</span>
@@ -291,11 +299,11 @@ export default async function ReportDetailPage({ params }: PageProps) {
               </div>
               <div className="flex justify-between">
                 <span>数据版本</span>
-                <span>v2026.05</span>
+                <span>{report.dataQuality?.source || "multi-source"}</span>
               </div>
             </div>
             <a
-              href="#"
+              href="#section-1-投资要点"
               className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
             >
               查看审计日志

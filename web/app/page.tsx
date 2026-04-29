@@ -1,37 +1,38 @@
 "use client";
 
-import { useState } from "react";
-import { getSupabaseBrowserClient } from "../lib/client/supabase-browser";
-import ThemeToggle from "../components/theme/ThemeToggle";
-import TurnstileWidget from "../components/security/TurnstileWidget";
+import { useMemo, useState } from "react";
 import EntitlementCard from "../components/account/EntitlementCard";
+import TurnstileWidget from "../components/security/TurnstileWidget";
+import ThemeToggle from "../components/theme/ThemeToggle";
+import { getSupabaseBrowserClient } from "../lib/client/supabase-browser";
 
-const SOURCE_CHIPS = [
-  { label: "公司公告", count: 128 },
-  { label: "年报季报", count: 64 },
-  { label: "券商研报", count: 86 },
-  { label: "新闻资讯", count: 312 },
-  { label: "宏观数据", count: 45 },
-  { label: "行业数据", count: 78 },
+type JobStage = "idle" | "queued" | "processing" | "completed" | "failed";
+
+const AGENT_STEPS = [
+  "投资要点 Agent",
+  "基本面 Agent",
+  "估值模型 Agent",
+  "行业比较 Agent",
+  "消息面 Agent",
+  "风险 Agent",
+  "结论 Agent",
+  "主编 Agent",
 ];
 
-const AGENT_TEAM = [
-  { name: "数据搜集代理", status: "已完成 · 来源覆盖全面" },
-  { name: "财务分析代理", status: "已完成 · 财务指标解析完毕" },
-  { name: "估值建模代理", status: "已完成 · 多模型估值已生成" },
-  { name: "行业研究代理", status: "已完成 · 行业对比分析完毕" },
-  { name: "消息解读代理", status: "已完成 · 重大事件已解析" },
-  { name: "风险评估代理", status: "已完成 · 风险因子识别完毕" },
-  { name: "结论生成代理", status: "已完成 · 投资建议已形成" },
-  { name: "主编（人类）", status: "已完成 · 报告终审与发布" },
+const QUALITY_METRICS = [
+  { label: "证据覆盖率", value: "98%", tone: "text-emerald-600 dark:text-emerald-300" },
+  { label: "反幻觉校验", value: "已启用", tone: "text-blue-600 dark:text-blue-300" },
+  { label: "结构化锚点", value: "7段", tone: "text-slate-700 dark:text-slate-200" },
+  { label: "模型路由", value: "3通道", tone: "text-slate-700 dark:text-slate-200" },
 ];
 
-const RISK_ITEMS = [
-  { text: "中美贸易摩擦升级", level: "中风险" },
-  { text: "全球消费电子需求放缓", level: "中风险" },
-  { text: "核心供应链中断风险", level: "低风险" },
-  { text: "汇率波动风险（USD/CNY）", level: "低风险" },
-];
+function resolveStepState(step: number, progress: number, stage: JobStage) {
+  if (stage === "failed") return "failed";
+  if (stage === "completed") return "completed";
+  if (step < progress) return "completed";
+  if (step === progress && (stage === "queued" || stage === "processing")) return "running";
+  return "waiting";
+}
 
 export default function HomePage() {
   const [stockInput, setStockInput] = useState("");
@@ -40,6 +41,13 @@ export default function HomePage() {
   const [turnstileReset, setTurnstileReset] = useState(0);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [jobStage, setJobStage] = useState<JobStage>("idle");
+  const [agentProgress, setAgentProgress] = useState(0);
+
+  const progressPct = useMemo(() => {
+    if (jobStage === "completed") return 100;
+    return Math.round((agentProgress / Math.max(AGENT_STEPS.length, 1)) * 100);
+  }, [agentProgress, jobStage]);
 
   const pollJob = async (jobId: string, token: string) => {
     for (let i = 0; i < 60; i += 1) {
@@ -49,7 +57,12 @@ export default function HomePage() {
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "任务查询失败");
+
+      setJobStage(payload.status === "failed" ? "failed" : payload.status === "completed" ? "completed" : "processing");
+      setAgentProgress(Math.min(AGENT_STEPS.length - 1, Math.floor((i + 1) / 6)));
+
       if (payload.status === "completed" && payload.reportId) {
+        setAgentProgress(AGENT_STEPS.length);
         window.location.href = `/reports/${payload.reportId}`;
         return;
       }
@@ -64,6 +77,8 @@ export default function HomePage() {
   const onGenerate = async () => {
     setLoading(true);
     setMessage("");
+    setJobStage("queued");
+    setAgentProgress(0);
     try {
       if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !turnstileToken) {
         throw new Error("请先完成人机验证");
@@ -90,6 +105,8 @@ export default function HomePage() {
       if (!response.ok) throw new Error(payload.error || "创建任务失败");
 
       if (payload.status === "completed" && payload.reportId) {
+        setJobStage("completed");
+        setAgentProgress(AGENT_STEPS.length);
         window.location.href = `/reports/${payload.reportId}`;
         return;
       }
@@ -97,6 +114,7 @@ export default function HomePage() {
       setMessage(`任务已创建：${payload.jobId}，正在生成...`);
       await pollJob(payload.jobId, token);
     } catch (error) {
+      setJobStage("failed");
       setMessage(error instanceof Error ? error.message : "生成失败");
     } finally {
       setTurnstileReset((v) => v + 1);
@@ -105,116 +123,130 @@ export default function HomePage() {
   };
 
   return (
-    <main className="mx-auto max-w-5xl space-y-6 p-6 text-slate-900 dark:text-slate-100">
-      <header className="flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">AIFinView</h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-            支持中港美股票的机构级中文研报（7-Agent 协作 + 主编统一润色）
-          </p>
-        </div>
-        <ThemeToggle />
-      </header>
-
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/70">
-        <label className="mb-2 block text-sm font-medium">输入股票名称/代码/简称</label>
-        <div className="flex flex-wrap gap-2">
-          <input
-            value={stockInput}
-            onChange={(event) => setStockInput(event.target.value)}
-            placeholder="例如：腾讯控股 / 00700 / TSLA / 600519"
-            className="min-w-[300px] flex-1 rounded-md border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-900"
-          />
-          <button
-            type="button"
-            onClick={onGenerate}
-            disabled={loading || !stockInput.trim()}
-            className="rounded-md bg-slate-900 px-4 py-2 text-white disabled:opacity-60 dark:bg-slate-100 dark:text-slate-900"
-          >
-            {loading ? "生成中..." : "生成研报"}
-          </button>
-        </div>
-        <TurnstileWidget onVerify={setTurnstileToken} resetSignal={turnstileReset} action="report_generate" />
-        {message && <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{message}</p>}
-      </section>
-
-      <EntitlementCard />
-
-      <section className="rounded-xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/70">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">数据工具与策略中心</h2>
-          <span className="rounded-full border border-slate-300 px-2 py-1 text-xs text-slate-600 dark:border-slate-700 dark:text-slate-300">
-            实时聚合
-          </span>
-        </div>
-        <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
-          作用：统一聚合财报三张表、公告、新闻、行业可比、宏观指标并做可信度校验，给 7 个分析 Agent 提供同一份“可审计证据底座”，避免幻觉数据。
-        </p>
-        <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
-          {SOURCE_CHIPS.map((item) => (
-            <div
-              key={item.label}
-              className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800/60"
-            >
-              <span className="text-slate-600 dark:text-slate-300">{item.label}</span>
-              <span className="ml-2 font-semibold text-blue-700 dark:text-blue-300">{item.count}</span>
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.10),_transparent_45%),linear-gradient(to_bottom,_#f8fafc,_#eef2ff_38%,_#f8fafc)] text-slate-900 dark:bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.14),_transparent_45%),linear-gradient(to_bottom,_#020617,_#0b1220_45%,_#020617)] dark:text-slate-100">
+      <div className="mx-auto max-w-[1600px] space-y-4 px-4 py-4 md:px-6">
+        <header className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/80">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-7">
+              <a href="/" className="text-3xl font-bold tracking-tight">AIFinView</a>
+              <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex dark:text-slate-300">
+                <a href="/" className="font-semibold text-blue-600 dark:text-blue-300">首页</a>
+                <a href="#report-studio">研报中心</a>
+                <a href="#quality-center">数据中心</a>
+                <a href="#agent-workflow">策略工具</a>
+                <a href="/account">会员中心</a>
+              </nav>
             </div>
-          ))}
-        </div>
-        <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">最近更新：2026-05-22 16:30</p>
-      </section>
-
-      <section className="rounded-xl border border-dashed border-amber-300 bg-amber-50/80 p-4 shadow-sm dark:border-amber-700/60 dark:bg-amber-900/20">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold text-amber-900 dark:text-amber-200">股票AI筛选工具</h2>
-            <p className="mt-1 text-sm text-amber-800/90 dark:text-amber-200/90">
-              待上线：按财务质量、估值分位、行业景气度、事件催化自动筛选候选池。
-            </p>
+            <div className="flex items-center gap-2">
+              <input
+                readOnly
+                value="搜索股票 / 行业 / 研报 / 关键词"
+                className="w-[320px] rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
+              />
+              <ThemeToggle />
+            </div>
           </div>
-          <span className="rounded-full bg-amber-200 px-3 py-1 text-xs font-semibold text-amber-900 dark:bg-amber-800/70 dark:text-amber-100">
-            Coming Soon
-          </span>
-        </div>
-      </section>
+        </header>
 
-      <section className="rounded-xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/70">
-        <h2 className="mb-3 text-lg font-semibold">智能分析团队（8）</h2>
-        <div className="space-y-3">
-          {AGENT_TEAM.map((agent, index) => (
-            <div key={agent.name} className="flex gap-3">
-              <div className="mt-1 h-2.5 w-2.5 rounded-full bg-emerald-500" />
-              <div>
-                <p className="font-medium">{index + 1}. {agent.name}</p>
-                <p className="text-sm text-slate-600 dark:text-slate-300">{agent.status}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="rounded-xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/70">
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">风险监控</h2>
-          <span className="text-xs text-slate-500 dark:text-slate-400">动态更新</span>
-        </div>
-        <ul className="space-y-2">
-          {RISK_ITEMS.map((item) => (
-            <li key={item.text} className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 dark:border-slate-700">
-              <span className="text-sm">{item.text}</span>
-              <span
-                className={`rounded-full px-2 py-1 text-xs font-medium ${
-                  item.level === "中风险"
-                    ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
-                    : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
-                }`}
+        <section id="report-studio" className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/80">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600 dark:text-blue-300">Institutional Chinese Research</p>
+            <h1 className="mt-2 text-4xl font-bold tracking-tight">机构级中文研报，证据驱动，拒绝幻觉</h1>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              覆盖中港美股票，7-Agent 并发分析与主编统一润色。所有结论需绑定证据锚点，缺失数据明确标注“禁止估算”。
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <input
+                value={stockInput}
+                onChange={(event) => setStockInput(event.target.value)}
+                placeholder="输入股票名称 / 代码 / 简称，例如：AAPL / 00700 / 600519"
+                className="min-w-[320px] flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
+              />
+              <button
+                type="button"
+                onClick={onGenerate}
+                disabled={loading || !stockInput.trim()}
+                className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:opacity-60"
               >
-                {item.level}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
+                {loading ? "生成中..." : "立即生成研报"}
+              </button>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <a href="/account" className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">查看会员权益</a>
+              <a href="/register" className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">注册账号</a>
+            </div>
+            <div className="mt-3"><TurnstileWidget onVerify={setTurnstileToken} resetSignal={turnstileReset} action="report_generate" /></div>
+            {message && <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{message}</p>}
+          </div>
+
+          <div className="space-y-4">
+            <section className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
+              <div className="mb-2 flex items-center justify-between">
+                <h2 className="text-lg font-semibold">研报质量中枢</h2>
+                <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">96 / 100</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                {QUALITY_METRICS.map((item) => (
+                  <div key={item.label} className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 dark:border-slate-700 dark:bg-slate-800/70">
+                    <p className="text-slate-500 dark:text-slate-400">{item.label}</p>
+                    <p className={`mt-1 font-semibold ${item.tone}`}>{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+            <EntitlementCard />
+          </div>
+        </section>
+
+        <section id="agent-workflow" className="rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-xl font-semibold">7-Agent 协作工作流（含主编）</h2>
+            <span className="text-sm text-slate-500 dark:text-slate-400">当前进度：{progressPct}%</span>
+          </div>
+          <div className="mb-3 h-2 rounded-full bg-slate-200 dark:bg-slate-700">
+            <div className="h-full rounded-full bg-blue-600 transition-all" style={{ width: `${progressPct}%` }} />
+          </div>
+          <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+            {AGENT_STEPS.map((name, idx) => {
+              const state = resolveStepState(idx, agentProgress, jobStage);
+              const tone =
+                state === "completed"
+                  ? "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300"
+                  : state === "running"
+                    ? "border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300"
+                    : state === "failed"
+                      ? "border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-700 dark:bg-rose-900/20 dark:text-rose-300"
+                      : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-300";
+              const statusText = state === "completed" ? "已完成" : state === "running" ? "运行中" : state === "failed" ? "失败" : "待命";
+              return (
+                <div key={name} className={`rounded-lg border px-3 py-2 ${tone}`}>
+                  <p className="text-sm font-medium">{idx + 1}. {name}</p>
+                  <p className="mt-1 text-xs">{statusText}</p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <section id="quality-center" className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <article className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
+            <h3 className="text-base font-semibold">证据锚点</h3>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">每个关键结论都绑定 年份 / 指标 / 数值 / 来源，支持审计追溯。</p>
+          </article>
+          <article className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
+            <h3 className="text-base font-semibold">数据血缘追踪</h3>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">AkShare、Tushare、Longbridge、yfinance、FRED、东财多源校验。</p>
+          </article>
+          <article className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
+            <h3 className="text-base font-semibold">反幻觉规则</h3>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">宏观/行业/公告数据缺失时强制输出“数据缺失，禁止估算”。</p>
+          </article>
+          <article className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
+            <h3 className="text-base font-semibold">宏观雷达与行业温度</h3>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">M1/M2/CPI/PPI/PMI/GDP + 跨资产雷达 + 行业板块温度同步注入 Agent。</p>
+          </article>
+        </section>
+      </div>
     </main>
   );
 }

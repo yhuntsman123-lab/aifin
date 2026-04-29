@@ -16,6 +16,11 @@
 - 多源数据聚合（Yahoo/Finnhub/SEC/东财公告/FRED）+ 来源追踪 + 缺失即禁估算
 - 报告详情页主题切换（默认跟随系统）+ 动态分析面板说明 + 三张表可视化 + 证据锚点跳转
 
+## UI 定稿规范
+
+- 固定风格与页面结构规范见：
+  - [UI_DESIGN_REQUIREMENTS.md](/E:/AIFinView/web/docs/UI_DESIGN_REQUIREMENTS.md)
+
 ## 本地启动
 
 ```bash
