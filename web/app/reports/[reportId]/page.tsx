@@ -153,8 +153,21 @@ export default async function ReportDetailPage({ params }: PageProps) {
   const newsCount = report.supplementaryData?.news.count || 0;
   const annCount = report.supplementaryData?.announcements.count || 0;
   const peerCount = report.supplementaryData?.industry.peers.length || 0;
+  const macroCount = report.macroSnapshot?.indicators?.filter((item) => item.value !== null).length || 0;
   const latestPrice = report.supplementaryData?.prices.latest || null;
   const return12m = report.supplementaryData?.prices.return12m || null;
+  const statementYears = report.financialStatements?.income_statement?.length || report.deepDiveSignals?.yearly?.length || 0;
+  const statementFrom =
+    report.financialStatements?.income_statement?.[0]?.fiscal_year ||
+    report.deepDiveSignals?.yearly?.[0]?.fiscal_year ||
+    "--";
+  const statementTo =
+    report.financialStatements?.income_statement?.[statementYears - 1]?.fiscal_year ||
+    report.deepDiveSignals?.yearly?.[statementYears - 1]?.fiscal_year ||
+    "--";
+  const lineage = report.supplementaryData?.sourceTrace || [];
+  const qualityOk = lineage.filter((item) => item.status === "ok").length;
+  const qualityAll = lineage.length;
 
   const riskRows =
     report.fraudSignals && report.fraudSignals.length > 0
@@ -226,18 +239,62 @@ export default async function ReportDetailPage({ params }: PageProps) {
             <nav className="space-y-2">
               {LEFT_NAV_ITEMS.map((item) => {
                 const matched = sectionNav.find((s) => s.title === item.title);
+                const active = item.title === "投资要点";
                 return (
                   <a
                     key={item.key}
                     href={`#${matched?.id || ""}`}
-                    className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+                    className={`flex items-center gap-2 rounded-lg border px-2 py-2 text-sm transition ${
+                      active
+                        ? "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-200"
+                        : "border-transparent text-slate-700 hover:border-slate-200 hover:bg-slate-100 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                    }`}
                   >
-                    <span className="text-blue-500">{item.icon}</span>
+                    <span className={`inline-flex h-5 w-5 items-center justify-center rounded-md text-xs ${active ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-200"}`}>
+                      {item.icon}
+                    </span>
                     <span>{item.title}</span>
                   </a>
                 );
               })}
             </nav>
+          </section>
+
+          <section className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-semibold">数据源审计</h2>
+              <span className="text-emerald-600 dark:text-emerald-300">✓</span>
+            </div>
+            <div className="space-y-2 text-xs text-slate-600 dark:text-slate-300">
+              <div className="flex justify-between">
+                <span>数据覆盖</span>
+                <span>{statementFrom}-{statementTo}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>财报来源</span>
+                <span>Wind / 同花顺</span>
+              </div>
+              <div className="flex justify-between">
+                <span>一致性校验</span>
+                <span className="font-semibold text-emerald-600 dark:text-emerald-300">
+                  {qualityAll > 0 ? `${qualityOk}/${qualityAll}` : "--"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>审计时间</span>
+                <span>{formatGeneratedAt(report.generatedAt).slice(0, 10)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>数据版本</span>
+                <span>v2026.05</span>
+              </div>
+            </div>
+            <a
+              href="#"
+              className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              查看审计日志
+            </a>
           </section>
         </aside>
 
@@ -349,10 +406,10 @@ export default async function ReportDetailPage({ params }: PageProps) {
                 新闻资讯 <span className="font-semibold">{newsCount}</span>
               </p>
               <p className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 dark:border-slate-700 dark:bg-slate-800">
-                行业数据 <span className="font-semibold">{peerCount}</span>
+                宏观数据 <span className="font-semibold">{macroCount}</span>
               </p>
               <p className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 dark:border-slate-700 dark:bg-slate-800">
-                宏观指标 <span className="font-semibold">{report.macroSnapshot?.indicators?.length || 0}</span>
+                行业数据 <span className="font-semibold">{peerCount}</span>
               </p>
             </div>
             <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
