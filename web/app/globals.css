@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --font-report-sans: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+  --font-report-serif: "Source Han Serif SC", "Songti SC", "Noto Serif SC", serif;
+}
+
+:root.dark {
+  color-scheme: dark;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(56, 189, 248, 0.08), transparent 35%),
+    radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.08), transparent 40%),
+    #f6f8fc;
+  color: #0f172a;
+  font-family: var(--font-report-sans);
+}
+
+.dark body {
+  background:
+    radial-gradient(circle at 15% 0%, rgba(56, 189, 248, 0.14), transparent 35%),
+    radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.14), transparent 40%),
+    #0b1220;
+  color: #e2e8f0;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-report-serif);
+  letter-spacing: 0.01em;
+}
+
+a {
+  text-underline-offset: 2px;
+}
+
+::selection {
+  background: rgba(59, 130, 246, 0.2);
+}

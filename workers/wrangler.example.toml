@@ -1,0 +1,13 @@
+name = "aifinview-queue-consumer"
+main = "cloudflare-queue-consumer.js"
+compatibility_date = "2026-04-29"
+
+[[queues.consumers]]
+queue = "aifinview-jobs"
+max_batch_size = 10
+max_batch_timeout = 5
+
+[vars]
+APP_INTERNAL_BASE_URL = "https://your-app.vercel.app"
+# INTERNAL_QUEUE_SECRET / DOUYIN_RENDER_WEBHOOK_URL 建议用 wrangler secret 注入
+
