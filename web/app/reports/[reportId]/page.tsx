@@ -42,6 +42,12 @@ function formatNumber(value: number | null | undefined): string {
   }).format(value);
 }
 
+function formatYearLabel(value: unknown): string {
+  if (typeof value === "number" && Number.isFinite(value)) return String(Math.trunc(value));
+  if (typeof value === "string" && value.trim()) return value.trim();
+  return "--";
+}
+
 function toPointsText(lines: string[]): string[] {
   const out: string[] = [];
   for (const line of lines) {
@@ -157,14 +163,13 @@ export default async function ReportDetailPage({ params }: PageProps) {
   const latestPrice = report.supplementaryData?.prices.latest || null;
   const return12m = report.supplementaryData?.prices.return12m || null;
   const statementYears = report.financialStatements?.income_statement?.length || report.deepDiveSignals?.yearly?.length || 0;
-  const statementFrom =
-    report.financialStatements?.income_statement?.[0]?.fiscal_year ||
-    report.deepDiveSignals?.yearly?.[0]?.fiscal_year ||
-    "--";
-  const statementTo =
-    report.financialStatements?.income_statement?.[statementYears - 1]?.fiscal_year ||
-    report.deepDiveSignals?.yearly?.[statementYears - 1]?.fiscal_year ||
-    "--";
+  const statementFrom = formatYearLabel(
+    report.financialStatements?.income_statement?.[0]?.fiscal_year ?? report.deepDiveSignals?.yearly?.[0]?.fiscal_year,
+  );
+  const statementTo = formatYearLabel(
+    report.financialStatements?.income_statement?.[statementYears - 1]?.fiscal_year ??
+      report.deepDiveSignals?.yearly?.[statementYears - 1]?.fiscal_year,
+  );
   const lineage = report.supplementaryData?.sourceTrace || [];
   const qualityOk = lineage.filter((item) => item.status === "ok").length;
   const qualityAll = lineage.length;
