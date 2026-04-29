@@ -156,9 +156,9 @@ async function enqueueDouyinRender(taskId: string, report: InstitutionalReport):
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { reportId: string; action: string } | Promise<{ reportId: string; action: string }> },
+  { params }: { params: Promise<{ reportId: string; action: string }> },
 ) {
-  const { reportId, action } = await Promise.resolve(params);
+  const { reportId, action } = await params;
   const validAction = action as ActionName;
 
   if (!["wechat", "xiaohongshu", "douyin", "pdf"].includes(validAction)) {
@@ -231,9 +231,9 @@ export async function POST(
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { reportId: string; action: string } | Promise<{ reportId: string; action: string }> },
+  { params }: { params: Promise<{ reportId: string; action: string }> },
 ) {
-  const { reportId, action } = await Promise.resolve(params);
+  const { reportId, action } = await params;
   const supabase = getSupabaseAdmin() as any;
   const { data, error } = await supabase
     .from("generation_tasks")

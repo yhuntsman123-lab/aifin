@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { userId: string } | Promise<{ userId: string }> },
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     const actor = await requireRequestUser(request);
@@ -17,7 +17,7 @@ export async function PATCH(
       return NextResponse.json({ error: "仅管理员可操作" }, { status: 403 });
     }
 
-    const { userId } = await Promise.resolve(params);
+    const { userId } = await params;
     const body = (await request.json()) as {
       tier: "vip" | "svip";
       reason?: string;

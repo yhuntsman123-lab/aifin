@@ -6,11 +6,11 @@ export const runtime = "nodejs";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { jobId: string } | Promise<{ jobId: string }> },
+  { params }: { params: Promise<{ jobId: string }> },
 ) {
   try {
     const user = await requireRequestUser(request);
-    const { jobId } = await Promise.resolve(params);
+    const { jobId } = await params;
     const supabase = getSupabaseAdmin();
     const { data: job, error } = await supabase.from("report_jobs").select("*").eq("id", jobId).maybeSingle();
     if (error || !job) {
