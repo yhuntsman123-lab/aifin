@@ -215,13 +215,13 @@ export default async function ReportDetailPage({ params }: PageProps) {
   };
 
   return (
-    <main className="mx-auto max-w-[1600px] space-y-4 px-4 py-4 text-slate-900 dark:text-slate-100 md:px-6">
+    <main className="mx-auto max-w-[1440px] space-y-4 px-4 py-4 text-slate-900 dark:text-slate-100 md:px-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reportJsonLd) }} />
 
       <header className="rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-6">
-            <a href="/" className="text-4xl font-bold tracking-tight">
+            <a href="/" className="text-3xl font-bold tracking-tight">
               AIFinView
             </a>
             <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex dark:text-slate-300">
@@ -316,7 +316,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-medium text-blue-600 dark:text-blue-300">机构级中文研报</p>
-                <h1 className="mt-1 text-6xl font-semibold tracking-tight">
+                <h1 className="mt-1 text-4xl font-semibold tracking-tight md:text-5xl">
                   {report.stock.name} <span className="text-slate-500">{report.stock.code}</span>
                 </h1>
                 <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
@@ -327,7 +327,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   {report.stock.name} <span className="ml-1">{report.stock.code}</span>
                 </p>
-                <p className="mt-1 text-4xl font-semibold text-rose-600 dark:text-rose-300">{formatNumber(latestPrice)}</p>
+                <p className="mt-1 text-3xl font-semibold text-rose-600 dark:text-rose-300">{formatNumber(latestPrice)}</p>
                 <p className="mt-1 text-sm text-emerald-600 dark:text-emerald-300">
                   {return12m === null ? "--" : `${return12m >= 0 ? "+" : ""}${(return12m * 100).toFixed(2)}%`} (12M)
                 </p>

@@ -105,11 +105,11 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-[#f5f8fd] text-slate-900 dark:bg-[#050b16] dark:text-slate-100">
-      <div className="mx-auto max-w-[1600px] px-5 py-4">
+      <div className="mx-auto max-w-[1440px] px-4 py-4 md:px-6">
         <header className="mb-4 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-8">
-              <a href="/" className="text-4xl font-bold tracking-tight">AIFinView</a>
+              <a href="/" className="text-3xl font-bold tracking-tight">AIFinView</a>
               <nav className="hidden items-center gap-7 text-sm md:flex">
                 <a href="/" className="font-semibold text-blue-600 dark:text-blue-300">首页</a>
                 <a href="/">研报中心</a>
@@ -119,7 +119,7 @@ export default function HomePage() {
               </nav>
             </div>
             <div className="flex items-center gap-2">
-              <input readOnly value="搜索股票 / 行业 / 研报 / 指标 / 宏观" className="w-[330px] rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-800" />
+              <input readOnly value="搜索股票 / 行业 / 研报 / 指标 / 宏观" className="hidden w-[280px] rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-500 lg:block dark:border-slate-700 dark:bg-slate-800" />
               <ThemeToggle />
             </div>
           </div>
@@ -130,14 +130,14 @@ export default function HomePage() {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
               <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_470px]">
                 <div>
-                  <h1 className="text-6xl font-bold leading-tight tracking-tight">机构级中文研报，<br />证据驱动，拒绝幻觉</h1>
-                  <p className="mt-3 text-lg text-slate-600 dark:text-slate-300">覆盖中 / 港 / 美主要市场，结合多源数据与严格验证体系，为机构投资者提供可验证、可追溯、可复用的研究结论。</p>
+                  <h1 className="text-4xl font-bold leading-tight tracking-tight md:text-5xl">机构级中文研报，<br />证据驱动，拒绝幻觉</h1>
+                  <p className="mt-3 text-base text-slate-600 dark:text-slate-300">覆盖中 / 港 / 美主要市场，结合多源数据与严格验证体系，为机构投资者提供可验证、可追溯、可复用的研究结论。</p>
                   <div className="mt-4 flex flex-wrap gap-2">
                     <button onClick={onGenerate} disabled={loading || !stockInput.trim()} className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60">{loading ? "生成中..." : "立即生成研报"}</button>
                     <a href="/reports" className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">查看样例报告</a>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <input value={stockInput} onChange={(e) => setStockInput(e.target.value)} placeholder="输入股票名称 / 代码 / 简称（AAPL / 00700 / 600519）" className="min-w-[320px] flex-1 rounded-xl border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" />
+                    <input value={stockInput} onChange={(e) => setStockInput(e.target.value)} placeholder="输入股票名称 / 代码 / 简称（AAPL / 00700 / 600519）" className="min-w-[260px] flex-1 rounded-xl border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" />
                   </div>
                   <div className="mt-2"><TurnstileWidget onVerify={setTurnstileToken} resetSignal={turnstileReset} action="report_generate" /></div>
                   {message && <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{message}</p>}
@@ -148,9 +148,9 @@ export default function HomePage() {
                     <h3 className="text-lg font-semibold">研报质量评分</h3>
                     <span className="text-xs text-slate-500">评估日期：2026-05-22</span>
                   </div>
-                  <div className="grid grid-cols-[150px_minmax(0,1fr)] gap-3">
+                  <div className="grid grid-cols-[128px_minmax(0,1fr)] gap-3">
                     <div className="flex h-36 w-36 items-center justify-center rounded-full border-[10px] border-emerald-500 bg-white text-center dark:bg-slate-900">
-                      <div><p className="text-6xl font-bold leading-none">96</p><p className="text-xl text-slate-500">/100</p></div>
+                      <div><p className="text-5xl font-bold leading-none">96</p><p className="text-lg text-slate-500">/100</p></div>
                     </div>
                     <div className="space-y-3 pt-1 text-sm">
                       {["数据完整性 98/100","证据覆盖率 93/100","模型一致性 95/100","风险揭示充分度 94/100"].map((row) => (
@@ -164,7 +164,7 @@ export default function HomePage() {
 
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900" id="agent-workflow">
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-4xl font-semibold">7-Agent 协作工作流</h2>
+                <h2 className="text-2xl font-semibold md:text-3xl">7-Agent 协作工作流</h2>
                 <span className="text-sm text-slate-500">总进度：{pct}%</span>
               </div>
               <div className="mb-3 h-2 rounded-full bg-slate-200 dark:bg-slate-700"><div className="h-full rounded-full bg-blue-600" style={{ width: `${pct}%` }} /></div>
