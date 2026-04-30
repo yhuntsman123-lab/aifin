@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import AppShell from "../../../components/layout/AppShell";
 import { getSupabaseBrowserClient } from "../../../lib/client/supabase-browser";
 
 interface AdminUserItem {
@@ -70,65 +71,65 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <main className="mx-auto max-w-5xl p-6 text-slate-900 dark:text-slate-100">
-      <h1 className="mb-4 text-2xl font-bold">用户权限维护</h1>
-      <form onSubmit={onSearch} className="mb-4 flex gap-2">
-        <input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="搜索邮箱/昵称"
-          className="w-full rounded-md border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-900"
-        />
-        <button
-          type="submit"
-          className="rounded-md border border-slate-300 px-3 py-2 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800"
-        >
-          搜索
-        </button>
-      </form>
+    <AppShell title="后台用户权限" subtitle="管理员可手动把用户调整为 VIP / SVIP，调整后即时生效。">
+      <div className="space-y-4 rounded-2xl border border-[var(--line-default)] bg-[var(--bg-card)] p-4 shadow-[var(--shadow-soft)]">
+        <form onSubmit={onSearch} className="flex flex-col gap-2 sm:flex-row">
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="搜索邮箱/昵称"
+            className="w-full rounded-xl border border-[var(--line-default)] bg-[var(--bg-subtle)] px-3 py-2"
+          />
+          <button
+            type="submit"
+            className="rounded-xl border border-[var(--line-default)] px-3 py-2 hover:bg-[var(--bg-subtle)]"
+          >
+            搜索
+          </button>
+        </form>
 
-      {message && <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">{message}</p>}
+        {message && <p className="text-sm text-[var(--text-secondary)]">{message}</p>}
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-100 dark:bg-slate-900">
-            <tr>
-              <th className="px-3 py-2 text-left">邮箱</th>
-              <th className="px-3 py-2 text-left">当前等级</th>
-              <th className="px-3 py-2 text-left">到期日</th>
-              <th className="px-3 py-2 text-left">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id} className="border-t border-slate-200 dark:border-slate-800">
-                <td className="px-3 py-2">{user.email || "-"}</td>
-                <td className="px-3 py-2">{user.effective_tier.toUpperCase()}</td>
-                <td className="px-3 py-2">{user.expires_at ? new Date(user.expires_at).toLocaleString("zh-CN") : "-"}</td>
-                <td className="px-3 py-2">
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => updateTier(user.id, "vip")}
-                      className="rounded border border-blue-500 px-2 py-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                    >
-                      改为VIP
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => updateTier(user.id, "svip")}
-                      className="rounded border border-amber-500 px-2 py-1 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20"
-                    >
-                      改为SVIP
-                    </button>
-                  </div>
-                </td>
+        <div className="overflow-x-auto rounded-xl border border-[var(--line-default)]">
+          <table className="w-full min-w-[760px] text-sm">
+            <thead className="bg-[var(--bg-subtle)]">
+              <tr>
+                <th className="px-3 py-2 text-left">邮箱</th>
+                <th className="px-3 py-2 text-left">当前等级</th>
+                <th className="px-3 py-2 text-left">到期日</th>
+                <th className="px-3 py-2 text-left">操作</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id} className="border-t border-[var(--line-default)]">
+                  <td className="px-3 py-2">{user.email || "-"}</td>
+                  <td className="px-3 py-2">{user.effective_tier.toUpperCase()}</td>
+                  <td className="px-3 py-2">{user.expires_at ? new Date(user.expires_at).toLocaleString("zh-CN") : "-"}</td>
+                  <td className="px-3 py-2">
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => updateTier(user.id, "vip")}
+                        className="rounded-lg border border-[#3d70ff] px-2 py-1 text-[#3d70ff] hover:bg-[var(--brand-primary-soft)]"
+                      >
+                        改为VIP
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updateTier(user.id, "svip")}
+                        className="rounded-lg border border-[#dba446] px-2 py-1 text-[#dba446] hover:bg-[#fff8eb] dark:hover:bg-[#3d2c10]"
+                      >
+                        改为SVIP
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </main>
+    </AppShell>
   );
 }
-

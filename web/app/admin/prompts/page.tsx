@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import AppShell from "../../../components/layout/AppShell";
 import { getSupabaseBrowserClient } from "../../../lib/client/supabase-browser";
 
 interface PromptRow {
@@ -27,9 +28,7 @@ export default function AdminPromptsPage() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "读取失败");
       setRows(payload.templates || []);
-      if (!selected && payload.templates?.length) {
-        setSelected(payload.templates[0]);
-      }
+      if (!selected && payload.templates?.length) setSelected(payload.templates[0]);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "读取失败");
     }
@@ -65,17 +64,16 @@ export default function AdminPromptsPage() {
   };
 
   return (
-    <main className="mx-auto max-w-6xl p-6 text-slate-900 dark:text-slate-100">
-      <h1 className="mb-4 text-2xl font-bold">Agent Prompt 配置</h1>
-      <div className="grid gap-4 md:grid-cols-[300px,1fr]">
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800">
+    <AppShell title="Agent Prompt 配置" subtitle="七段 Agent 与主编 Agent 的提示词可在此统一管理。">
+      <div className="grid gap-4 rounded-2xl border border-[var(--line-default)] bg-[var(--bg-card)] p-4 shadow-[var(--shadow-soft)] md:grid-cols-[300px,1fr]">
+        <div className="rounded-xl border border-[var(--line-default)]">
           {rows.map((row) => (
             <button
               key={row.agentKey}
               type="button"
               onClick={() => setSelected(row)}
-              className={`block w-full border-b border-slate-200 px-3 py-2 text-left text-sm dark:border-slate-800 ${
-                selected?.agentKey === row.agentKey ? "bg-slate-100 dark:bg-slate-800" : ""
+              className={`block w-full border-b border-[var(--line-default)] px-3 py-2 text-left text-sm ${
+                selected?.agentKey === row.agentKey ? "bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]" : ""
               }`}
             >
               {row.displayName}
@@ -83,35 +81,34 @@ export default function AdminPromptsPage() {
           ))}
         </div>
 
-        <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-800">
+        <div className="rounded-xl border border-[var(--line-default)] p-4">
           {!selected ? (
-            <p className="text-sm text-slate-500">请选择一个 Agent</p>
+            <p className="text-sm text-[var(--text-muted)]">请选择一个 Agent</p>
           ) : (
             <div className="space-y-3">
               <input
                 value={selected.displayName}
                 onChange={(event) => setSelected({ ...selected, displayName: event.target.value })}
-                className="w-full rounded-md border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-900"
+                className="w-full rounded-xl border border-[var(--line-default)] bg-[var(--bg-subtle)] px-3 py-2"
               />
               <textarea
                 value={selected.systemPrompt}
                 onChange={(event) => setSelected({ ...selected, systemPrompt: event.target.value })}
                 rows={16}
-                className="w-full rounded-md border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-900"
+                className="w-full rounded-xl border border-[var(--line-default)] bg-[var(--bg-subtle)] px-3 py-2"
               />
               <button
                 type="button"
                 onClick={save}
-                className="rounded-md bg-slate-900 px-3 py-2 text-white dark:bg-slate-100 dark:text-slate-900"
+                className="rounded-xl bg-[var(--brand-primary)] px-3 py-2 font-medium text-white"
               >
                 保存 Prompt
               </button>
             </div>
           )}
-          {message && <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{message}</p>}
+          {message && <p className="mt-2 text-sm text-[var(--text-secondary)]">{message}</p>}
         </div>
       </div>
-    </main>
+    </AppShell>
   );
 }
-

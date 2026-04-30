@@ -12,11 +12,11 @@ export default function ThemeToggle() {
   const { mode, resolvedTheme, setMode } = useTheme();
 
   return (
-    <div className="rounded-lg border border-slate-300 bg-white/85 p-1 text-xs backdrop-blur dark:border-slate-700 dark:bg-slate-900/80">
-      <div className="mb-1 px-2 text-[11px] text-slate-500 dark:text-slate-400">
+    <div className="rounded-2xl border border-[var(--line-default)] bg-[var(--bg-card)] p-2 text-xs shadow-[var(--shadow-soft)] backdrop-blur">
+      <div className="mb-1 px-2 text-[11px] text-[var(--text-muted)]">
         主题：{resolvedTheme === "dark" ? "深色" : "浅色"}
       </div>
-      <div className="flex gap-1">
+      <div className="grid grid-cols-3 gap-1">
         {OPTIONS.map((option) => {
           const active = mode === option.mode;
           return (
@@ -26,8 +26,8 @@ export default function ThemeToggle() {
               onClick={() => setMode(option.mode)}
               className={`rounded-md px-2 py-1 transition ${
                 active
-                  ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                  : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                  ? "bg-[var(--text-primary)] text-white"
+                  : "text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]"
               }`}
             >
               {option.label}
@@ -38,4 +38,3 @@ export default function ThemeToggle() {
     </div>
   );
 }
-
