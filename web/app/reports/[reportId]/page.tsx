@@ -221,7 +221,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
       <header className="rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-6">
-            <a href="/" className="text-2xl font-bold tracking-tight">
+            <a href="/" className="text-4xl font-bold tracking-tight">
               AIFinView
             </a>
             <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex dark:text-slate-300">
@@ -248,7 +248,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
       <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)_340px]">
         <aside className="space-y-4">
           <section className="sticky top-4 rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
-            <h2 className="mb-3 text-lg font-semibold">报告目录</h2>
+            <h2 className="mb-3 text-xl font-semibold">报告目录</h2>
             <nav className="space-y-2">
               {LEFT_NAV_ITEMS.map((item) => {
                 const matched = sectionNav.find((s) => s.title === item.title);
@@ -315,8 +315,8 @@ export default async function ReportDetailPage({ params }: PageProps) {
           <section className="rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-medium text-blue-600 dark:text-blue-300">机构级中文研报</p>
-                <h1 className="mt-1 text-4xl font-semibold tracking-tight">
+                <p className="text-sm font-medium text-blue-600 dark:text-blue-300">机构级中文研报</p>
+                <h1 className="mt-1 text-6xl font-semibold tracking-tight">
                   {report.stock.name} <span className="text-slate-500">{report.stock.code}</span>
                 </h1>
                 <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
