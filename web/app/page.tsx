@@ -104,14 +104,14 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#eef2f8] text-slate-900 dark:bg-[#050b16] dark:text-slate-100">
+    <main className="min-h-screen bg-[var(--bg-app)] text-[var(--text-primary)]">
       <div className="mx-auto w-full max-w-[1400px] px-3 py-4 sm:px-4 sm:py-5 lg:px-6">
-        <header className="mb-4 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <header className="mb-4 rounded-3xl border border-[var(--line-default)] bg-[color-mix(in_oklab,var(--bg-card)_88%,transparent)] px-4 py-3 shadow-[var(--shadow-soft)] backdrop-blur-md">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3 sm:gap-6">
               <a href="/" className="text-3xl font-bold tracking-tight sm:text-4xl">AIFinView</a>
-              <nav className="hidden items-center gap-6 text-sm md:flex">
-                <a href="/" className="font-semibold text-blue-600 dark:text-blue-300">首页</a>
+              <nav className="hidden items-center gap-6 text-sm text-[var(--text-secondary)] md:flex">
+                <a href="/" className="font-semibold text-[var(--brand-primary)]">首页</a>
                 <a href="/">研报中心</a>
                 <a href="/">数据中心</a>
                 <a href="/">策略工具</a>
@@ -119,7 +119,7 @@ export default function HomePage() {
               </nav>
             </div>
             <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
-              <input readOnly value="搜索股票 / 行业 / 研报 / 指标 / 宏观" className="hidden w-[260px] rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-500 lg:block xl:w-[320px] dark:border-slate-700 dark:bg-slate-800" />
+              <input readOnly value="搜索股票 / 行业 / 研报 / 指标 / 宏观" className="hidden w-[260px] rounded-xl border border-[var(--line-default)] bg-[var(--bg-subtle)] px-3 py-2 text-sm text-[var(--text-muted)] lg:block xl:w-[320px]" />
               <ThemeToggle />
             </div>
           </div>
@@ -127,34 +127,34 @@ export default function HomePage() {
 
         <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
           <div className="space-y-4">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div className="rounded-3xl border border-[var(--line-default)] bg-[color-mix(in_oklab,var(--bg-card)_90%,transparent)] p-5 shadow-[var(--shadow-soft)] backdrop-blur-sm">
               <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
                 <div>
-                  <h1 className="text-[2rem] font-semibold leading-tight tracking-tight text-slate-900 sm:text-[2.4rem] lg:text-[2.8rem] dark:text-slate-50">机构级中文研报，<br />证据驱动，拒绝幻觉</h1>
-                  <p className="mt-3 text-base text-slate-600 dark:text-slate-300">覆盖中 / 港 / 美主要市场，结合多源数据与严格验证体系，为机构投资者提供可验证、可追溯、可复用的研究结论。</p>
+                  <h1 className="text-[2rem] font-semibold leading-[1.15] tracking-tight sm:text-[2.4rem] lg:text-[2.95rem]">机构级中文研报，<br />证据驱动，拒绝幻觉</h1>
+                  <p className="mt-3 max-w-2xl text-base text-[var(--text-secondary)]">覆盖中 / 港 / 美主要市场，结合多源数据与严格验证体系，为机构投资者提供可验证、可追溯、可复用的研究结论。</p>
                   <div className="mt-4 flex flex-wrap gap-2">
-                    <button onClick={onGenerate} disabled={loading || !stockInput.trim()} className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60">{loading ? "生成中..." : "立即生成研报"}</button>
-                    <a href="/reports" className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">查看样例报告</a>
+                    <button onClick={onGenerate} disabled={loading || !stockInput.trim()} className="rounded-xl bg-[var(--brand-primary)] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_22px_rgba(36,93,255,0.32)] hover:brightness-110 disabled:opacity-60">{loading ? "生成中..." : "立即生成研报"}</button>
+                    <a href="/reports" className="rounded-xl border border-[var(--line-default)] bg-[var(--bg-subtle)] px-5 py-2.5 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">查看样例报告</a>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <input value={stockInput} onChange={(e) => setStockInput(e.target.value)} placeholder="输入股票名称 / 代码 / 简称（AAPL / 00700 / 600519）" className="w-full min-w-0 flex-1 rounded-xl border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800" />
+                    <input value={stockInput} onChange={(e) => setStockInput(e.target.value)} placeholder="输入股票名称 / 代码 / 简称（AAPL / 00700 / 600519）" className="w-full min-w-0 flex-1 rounded-xl border border-[var(--line-default)] bg-[var(--bg-subtle)] px-3 py-2 text-sm" />
                   </div>
                   <div className="mt-2"><TurnstileWidget onVerify={setTurnstileToken} resetSignal={turnstileReset} action="report_generate" /></div>
-                  {message && <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{message}</p>}
+                  {message && <p className="mt-2 text-sm text-[var(--text-secondary)]">{message}</p>}
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+                <div className="rounded-2xl border border-[var(--line-default)] bg-[var(--bg-subtle)] p-4">
                   <div className="mb-2 flex items-center justify-between">
                     <h3 className="text-lg font-semibold">研报质量评分</h3>
-                    <span className="text-xs text-slate-500">评估日期：2026-05-22</span>
+                    <span className="text-xs text-[var(--text-muted)]">评估日期：2026-05-22</span>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-[120px_minmax(0,1fr)]">
-                    <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full border-[8px] border-emerald-500 bg-white text-center sm:mx-0 dark:bg-slate-900">
-                      <div><p className="text-5xl font-bold leading-none">96</p><p className="text-sm text-slate-500">/100</p></div>
+                    <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full border-[8px] border-[var(--success)] bg-[var(--bg-card)] text-center sm:mx-0">
+                      <div><p className="text-5xl font-bold leading-none">96</p><p className="text-sm text-[var(--text-muted)]">/100</p></div>
                     </div>
                     <div className="space-y-3 pt-1 text-sm">
                       {["数据完整性 98/100","证据覆盖率 93/100","模型一致性 95/100","风险揭示充分度 94/100"].map((row) => (
-                        <div key={row} className="flex items-center justify-between border-b border-slate-200 pb-1 dark:border-slate-700"><span>{row.split(" ")[0]}</span><span className="font-semibold text-emerald-600 dark:text-emerald-300">{row.split(" ")[1]}</span></div>
+                        <div key={row} className="flex items-center justify-between border-b border-[var(--line-default)] pb-1"><span>{row.split(" ")[0]}</span><span className="font-semibold text-[var(--success)]">{row.split(" ")[1]}</span></div>
                       ))}
                     </div>
                   </div>
@@ -162,51 +162,51 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900" id="agent-workflow">
+            <div className="rounded-3xl border border-[var(--line-default)] bg-[color-mix(in_oklab,var(--bg-card)_92%,transparent)] p-4 shadow-[var(--shadow-soft)] backdrop-blur-sm" id="agent-workflow">
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-2xl font-semibold sm:text-3xl">7-Agent 协作工作流</h2>
-                <span className="text-sm text-slate-500">总进度：{pct}%</span>
+                <span className="text-sm text-[var(--text-muted)]">总进度：{pct}%</span>
               </div>
-              <div className="mb-3 h-2 rounded-full bg-slate-200 dark:bg-slate-700"><div className="h-full rounded-full bg-blue-600" style={{ width: `${pct}%` }} /></div>
+              <div className="mb-3 h-2 rounded-full bg-[var(--line-default)]"><div className="h-full rounded-full bg-[var(--brand-primary)]" style={{ width: `${pct}%` }} /></div>
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
                 {AGENTS.map((name, index) => {
                   const st = stateFor(index, progress, jobStage);
-                  const cls = st === "done" ? "border-emerald-300 bg-emerald-50" : st === "running" ? "border-blue-300 bg-blue-50" : st === "failed" ? "border-rose-300 bg-rose-50" : "border-slate-200 bg-slate-50";
+                  const cls = st === "done" ? "border-emerald-300 bg-emerald-50/80 dark:bg-emerald-900/20" : st === "running" ? "border-blue-300 bg-blue-50/80 dark:bg-blue-900/20" : st === "failed" ? "border-rose-300 bg-rose-50/80 dark:bg-rose-900/20" : "border-[var(--line-default)] bg-[var(--bg-subtle)]";
                   const txt = st === "done" ? "已完成" : st === "running" ? "运行中" : st === "failed" ? "失败" : "等待中";
-                  return <div key={name} className={`rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 ${cls}`}><p className="font-medium">{String(index + 1).padStart(2, "0")} {name}</p><p className="mt-1 text-xs text-slate-500">{txt}</p></div>;
+                  return <div key={name} className={`rounded-xl border px-3 py-2 text-sm ${cls}`}><p className="font-medium">{String(index + 1).padStart(2, "0")} {name}</p><p className="mt-1 text-xs text-[var(--text-muted)]">{txt}</p></div>;
                 })}
               </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
               {QUALITY_BLOCKS.map((item) => (
-                <article key={item.title} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <article key={item.title} className="rounded-2xl border border-[var(--line-default)] bg-[var(--bg-card)] p-3 shadow-[var(--shadow-soft)]">
                   <h3 className="text-sm font-semibold">{item.title}</h3>
-                  <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">{item.desc}</p>
+                  <p className="mt-1 text-xs text-[var(--text-secondary)]">{item.desc}</p>
                 </article>
               ))}
             </div>
 
             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {["苹果公司（AAPL.O）深度研报", "腾讯控股（0700.HK）跟踪报告", "宁德时代（300750.SZ）分析报告"].map((t) => (
-                <article key={t} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <article key={t} className="rounded-2xl border border-[var(--line-default)] bg-[var(--bg-card)] p-3 shadow-[var(--shadow-soft)]">
                   <h3 className="text-sm font-semibold">{t}</h3>
-                  <div className="mt-2 h-20 rounded bg-slate-50 dark:bg-slate-800" />
-                  <a href="/reports" className="mt-2 inline-block text-xs text-blue-600 dark:text-blue-300">查看报告全文</a>
+                  <div className="mt-2 h-20 rounded-xl bg-[var(--bg-subtle)]" />
+                  <a href="/reports" className="mt-2 inline-block text-xs font-medium text-[var(--brand-primary)]">查看报告全文</a>
                 </article>
               ))}
             </div>
           </div>
 
           <aside className="space-y-4 xl:sticky xl:top-4 xl:self-start">
-        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <section className="rounded-3xl border border-[var(--line-default)] bg-[color-mix(in_oklab,var(--bg-card)_95%,transparent)] p-4 shadow-[var(--shadow-soft)]">
               <h3 className="mb-2 text-lg font-semibold">会员权益</h3>
               <div className="space-y-3">
-                <div className="rounded-xl border border-slate-300 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800"><div className="flex items-center justify-between"><p className="text-2xl font-bold">FREE</p><span className="text-xs">当前套餐</span></div><p className="mt-2 text-sm text-slate-600 dark:text-slate-300">今日剩余查询次数 1 / 1</p></div>
-                <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-900/20"><div className="flex items-center justify-between"><p className="text-2xl font-bold">VIP</p><span className="rounded-full bg-amber-500 px-2 py-0.5 text-xs text-white">推荐</span></div><p className="mt-2 text-sm text-slate-700 dark:text-slate-200">今日剩余查询次数 10 / 10</p></div>
-                <div className="rounded-xl border border-blue-800 bg-[#1e2f52] p-3 text-white"><div className="flex items-center justify-between"><p className="text-2xl font-bold">SVIP</p><span className="text-xs text-blue-100">机构版</span></div><p className="mt-2 text-sm text-blue-100">今日剩余查询次数 20 / 20</p></div>
+                <div className="rounded-xl border border-[var(--line-default)] bg-[var(--bg-subtle)] p-3"><div className="flex items-center justify-between"><p className="text-2xl font-bold">FREE</p><span className="text-xs text-[var(--text-muted)]">当前套餐</span></div><p className="mt-2 text-sm text-[var(--text-secondary)]">今日剩余查询次数 1 / 1</p></div>
+                <div className="rounded-xl border border-amber-300 bg-amber-50/80 p-3 dark:bg-amber-900/20"><div className="flex items-center justify-between"><p className="text-2xl font-bold">VIP</p><span className="rounded-full bg-[#e2a936] px-2 py-0.5 text-xs text-white">推荐</span></div><p className="mt-2 text-sm text-[var(--text-secondary)]">今日剩余查询次数 10 / 10</p></div>
+                <div className="rounded-xl border border-[#20335e] bg-gradient-to-br from-[#1f376b] to-[#1c2847] p-3 text-white"><div className="flex items-center justify-between"><p className="text-2xl font-bold">SVIP</p><span className="text-xs text-blue-100">机构版</span></div><p className="mt-2 text-sm text-blue-100">今日剩余查询次数 20 / 20</p></div>
               </div>
-              <a href="/account" className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700">查看权益详情</a>
+              <a href="/account" className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-[var(--brand-primary)] px-3 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(36,93,255,0.34)] hover:brightness-110">查看权益详情</a>
             </section>
           </aside>
         </section>

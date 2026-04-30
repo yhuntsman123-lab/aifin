@@ -66,8 +66,8 @@ body {
 h1,
 h2,
 h3 {
-  font-family: var(--font-report-serif);
-  letter-spacing: 0.01em;
+  font-family: var(--font-report-sans);
+  letter-spacing: 0;
 }
 
 a {
