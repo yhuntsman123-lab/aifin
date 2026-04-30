@@ -215,13 +215,13 @@ export default async function ReportDetailPage({ params }: PageProps) {
   };
 
   return (
-    <main className="mx-auto max-w-[1440px] space-y-4 px-4 py-4 text-slate-900 dark:text-slate-100 md:px-6">
+    <main className="mx-auto w-full max-w-[1720px] space-y-4 px-3 py-3 text-slate-900 dark:text-slate-100 sm:px-4 md:px-5 lg:px-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reportJsonLd) }} />
 
       <header className="rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-6">
-            <a href="/" className="text-3xl font-bold tracking-tight">
+          <div className="flex items-center gap-3 sm:gap-5">
+            <a href="/" className="text-2xl font-bold tracking-tight sm:text-3xl">
               AIFinView
             </a>
             <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex dark:text-slate-300">
@@ -234,20 +234,20 @@ export default async function ReportDetailPage({ params }: PageProps) {
               <a href="/account">会员中心</a>
             </nav>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
             <input
               readOnly
               value="搜索股票 / 行业 / 研报"
-              className="w-[300px] rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
+              className="hidden w-[260px] rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-500 lg:block xl:w-[340px] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
             />
             <ThemeToggle />
           </div>
         </div>
       </header>
 
-      <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)_340px]">
-        <aside className="space-y-4">
-          <section className="sticky top-4 rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
+      <div className="grid gap-4 xl:grid-cols-[210px_minmax(0,1fr)_320px] 2xl:grid-cols-[220px_minmax(0,1fr)_360px]">
+        <aside className="order-2 space-y-4 xl:order-1">
+          <section className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm xl:sticky xl:top-4 dark:border-slate-800 dark:bg-slate-900/80">
             <h2 className="mb-3 text-xl font-semibold">报告目录</h2>
             <nav className="space-y-2">
               {LEFT_NAV_ITEMS.map((item) => {
@@ -311,19 +311,19 @@ export default async function ReportDetailPage({ params }: PageProps) {
           </section>
         </aside>
 
-        <article className="space-y-4">
+        <article className="order-1 min-w-0 space-y-4 xl:order-2">
           <section className="rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-medium text-blue-600 dark:text-blue-300">机构级中文研报</p>
-                <h1 className="mt-1 text-4xl font-semibold tracking-tight md:text-5xl">
+                <h1 className="mt-1 text-[2rem] font-semibold tracking-tight sm:text-[2.4rem] lg:text-[2.8rem]">
                   {report.stock.name} <span className="text-slate-500">{report.stock.code}</span>
                 </h1>
                 <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
                   生成时间：{formatGeneratedAt(report.generatedAt)} ｜ 研究机构：AIFinView 研究院
                 </p>
               </div>
-              <div className="min-w-[280px] rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
+              <div className="w-full rounded-2xl border border-slate-200 bg-white p-4 sm:max-w-[420px] dark:border-slate-700 dark:bg-slate-900">
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   {report.stock.name} <span className="ml-1">{report.stock.code}</span>
                 </p>
@@ -354,7 +354,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
 
           <section className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
             <h2 className="mb-3 text-lg font-semibold">七段核心结论</h2>
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
               {report.sections.map((section, index) => {
                 const sectionId = sectionNav[index]?.id || buildSectionId(section.title, index);
                 const points = toPointsText(section.content.split(/\n+/));
@@ -403,7 +403,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
           </section>
         </article>
 
-        <aside className="space-y-4">
+        <aside className="order-3 min-w-0 space-y-4">
           <CompactEntitlementWidget />
 
           <section className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
