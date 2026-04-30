@@ -12,9 +12,9 @@ interface AppShellProps {
 
 const NAV = [
   { href: "/", label: "首页" },
-  { href: "/", label: "研报中心" },
-  { href: "/", label: "数据中心" },
-  { href: "/", label: "策略工具" },
+  { href: "/reports", label: "研报中心" },
+  { href: "/data-center", label: "数据中心" },
+  { href: "/strategy-tools", label: "策略工具" },
   { href: "/account", label: "会员中心" },
 ];
 

@@ -112,9 +112,9 @@ export default function HomePage() {
               <a href="/" className="text-3xl font-bold tracking-tight sm:text-4xl">AIFinView</a>
               <nav className="hidden items-center gap-6 text-sm text-[var(--text-secondary)] md:flex">
                 <a href="/" className="font-semibold text-[var(--brand-primary)]">首页</a>
-                <a href="/">研报中心</a>
-                <a href="/">数据中心</a>
-                <a href="/">策略工具</a>
+                <a href="/reports">研报中心</a>
+                <a href="/data-center">数据中心</a>
+                <a href="/strategy-tools">策略工具</a>
                 <a href="/account">会员中心</a>
               </nav>
             </div>
@@ -188,11 +188,11 @@ export default function HomePage() {
             </div>
 
             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-              {["苹果公司（AAPL.O）深度研报", "腾讯控股（0700.HK）跟踪报告", "宁德时代（300750.SZ）分析报告"].map((t) => (
-                <article key={t} className="rounded-2xl border border-[var(--line-default)] bg-[var(--bg-card)] p-3 shadow-[var(--shadow-soft)]">
-                  <h3 className="text-sm font-semibold">{t}</h3>
+              {[{ title: "苹果公司（AAPL.O）深度研报", href: "/reports/demo-aapl" }, { title: "腾讯控股（0700.HK）跟踪报告", href: "/reports/demo-tencent" }, { title: "宁德时代（300750.SZ）分析报告", href: "/reports/demo-catl" }].map((item) => (
+                <article key={item.title} className="rounded-2xl border border-[var(--line-default)] bg-[var(--bg-card)] p-3 shadow-[var(--shadow-soft)]">
+                  <h3 className="text-sm font-semibold">{item.title}</h3>
                   <div className="mt-2 h-20 rounded-xl bg-[var(--bg-subtle)]" />
-                  <a href="/reports" className="mt-2 inline-block text-xs font-medium text-[var(--brand-primary)]">查看报告全文</a>
+                  <a href={item.href} className="mt-2 inline-block text-xs font-medium text-[var(--brand-primary)]">查看报告全文</a>
                 </article>
               ))}
             </div>

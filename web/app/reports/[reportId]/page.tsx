@@ -6,6 +6,7 @@ import FinancialStatementsPanel from "../../../components/report/FinancialStatem
 import ReportActionButtons from "../../../components/report/ReportActionButtons";
 import ThemeToggle from "../../../components/theme/ThemeToggle";
 import { normalizeChineseInstitutionalReport } from "../../../lib/report/chinese-template";
+import { getDemoReportById } from "../../../lib/report/demo-reports";
 import type { InstitutionalReport } from "../../../lib/report/types";
 import { getSupabaseAdmin } from "../../../lib/server/supabase-admin";
 
@@ -67,7 +68,9 @@ async function getReport(reportId: string): Promise<InstitutionalReport | null> 
     .eq("id", reportId)
     .maybeSingle();
 
-  if (!data) return null;
+  if (!data) {
+    return getDemoReportById(reportId);
+  }
   const payload = (data.payload || {}) as Partial<InstitutionalReport>;
   const report: InstitutionalReport = {
     id: data.id,
@@ -226,11 +229,11 @@ export default async function ReportDetailPage({ params }: PageProps) {
             </a>
             <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex dark:text-slate-300">
               <a href="/">首页</a>
-              <a href="/" className="font-semibold text-blue-600 dark:text-blue-300">
+              <a href="/reports" className="font-semibold text-blue-600 dark:text-blue-300">
                 研报中心
               </a>
-              <a href="/">数据中心</a>
-              <a href="/">策略工具</a>
+              <a href="/data-center">数据中心</a>
+              <a href="/strategy-tools">策略工具</a>
               <a href="/account">会员中心</a>
             </nav>
           </div>
